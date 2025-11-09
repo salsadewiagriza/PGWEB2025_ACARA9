@@ -1,3 +1,23 @@
+<?php
+error_reporting(E_ALL & ~E_NOTICE); // Menyembunyikan warning ringan
+
+// === Koneksi ke Database ===
+$servername = "localhost";
+$username   = "root";
+$password   = "";
+$dbname     = "kecamatan_sleman";
+
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Cek koneksi
+if ($conn->connect_error) {
+    die("<p style='text-align:center; color:red;'>Koneksi gagal: " . $conn->connect_error . "</p>");
+}
+
+// === Query Data dari Tabel kecamatan ===
+$sql = "SELECT * FROM kecamatan";
+$result = $conn->query($sql);
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -47,31 +67,32 @@
         .tombol:hover {
             background-color: #45a049;
         }
+        .hapus {
+            background-color: #e74c3c;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            text-decoration: none;
+        }
+        .hapus:hover {
+            background-color: #c0392b;
+        }
+        .edit {
+            background-color: #3498db;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            text-decoration: none;
+        }
+        .edit:hover {
+            background-color: #2980b9;
+        }
         .container {
             text-align: center;
         }
     </style>
 </head>
 <body>
-
-<?php
-// === Koneksi ke Database ===
-$servername = "localhost";
-$username   = "root";
-$password   = "";
-$dbname     = "kecamatan_sleman";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Cek koneksi
-if ($conn->connect_error) {
-    die("<p style='text-align:center; color:red;'>Koneksi gagal: " . $conn->connect_error . "</p>");
-}
-
-// === Query Data dari Tabel kecamatan ===
-$sql = "SELECT * FROM kecamatan";
-$result = $conn->query($sql);
-?>
 
 <div class="container">
     <a href="input/index.html" class="tombol">+ Tambah Data Kecamatan</a>
@@ -81,7 +102,7 @@ $result = $conn->query($sql);
 if ($result && $result->num_rows > 0) {
     echo "<table>
             <tr>
-                <td colspan='5' class='judul'>Data Kecamatan di Kabupaten Sleman</td>
+                <td colspan='7' class='judul'>Data Kecamatan di Kabupaten Sleman</td>
             </tr>
             <tr class='header'>
                 <th>Kecamatan</th>
@@ -89,6 +110,7 @@ if ($result && $result->num_rows > 0) {
                 <th>Latitude</th>
                 <th>Luas (km²)</th>
                 <th>Jumlah Penduduk</th>
+                <th colspan='2'>Aksi</th>
             </tr>";
 
     while ($row = $result->fetch_assoc()) {
@@ -98,6 +120,8 @@ if ($result && $result->num_rows > 0) {
                 <td>" . htmlspecialchars($row['Latitude']) . "</td>
                 <td>" . number_format($row['Luas'], 2, ',', '.') . "</td>
                 <td>" . number_format($row['Jumlah_Penduduk'], 0, ',', '.') . "</td>
+                <td><a class='hapus' href='delete.php?id=" . $row['ID'] . "'>Hapus</a></td>
+                <td><a class='edit' href='edit/index.php?id=" . $row['ID'] . "'>Edit</a></td>
               </tr>";
     }
 
